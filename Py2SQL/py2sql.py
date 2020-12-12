@@ -1,5 +1,7 @@
+from .init_locker import InitLocker
 
-class Py2SQL:
+
+class Py2SQL(metaclass=InitLocker):
 
     @staticmethod
     def db_connect(db):
