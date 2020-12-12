@@ -14,7 +14,8 @@ class Py2SQL(metaclass=InitLocker):
             Py2SQL.__database_connection = mysql.connector.connect(
                 host=db.host,
                 user=db.user,
-                password=db.password
+                password=db.password,
+                database=db.database
             )
         else:
             raise ValueError('db have to be DatabaseInfo class')
