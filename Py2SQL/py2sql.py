@@ -1,11 +1,23 @@
+import mysql.connector
+
+from .database_info import DatabaseInfo
 from .init_locker import InitLocker
 
 
 class Py2SQL(metaclass=InitLocker):
 
+    __database_connection = None
+
     @staticmethod
-    def db_connect(db):
-        pass
+    def db_connect(db: DatabaseInfo):
+        if isinstance(db, DatabaseInfo):
+            Py2SQL.__database_connection = mysql.connector.connect(
+                host=db.host,
+                user=db.user,
+                password=db.password
+            )
+        else:
+            raise ValueError('db have to be DatabaseInfo class')
 
     @staticmethod
     def db_disconnect():
