@@ -174,12 +174,12 @@ class Py2SQL(metaclass=InitLocker):
         for attribute in attributes:
             where_part += 'T.{0} = "{1}" AND '.format(attribute[0], attribute[1])
         if len(where_part) != 0:
-            where_part = where_part[: -4]
+            where_part = 'WHERE ' + where_part[: -4]
 
         cursor = Py2SQL.__database_connection.cursor()
         cursor.execute('SELECT * '
                        'FROM {0} AS T '
-                       'WHERE {1};'.format(table, where_part))
+                       '{1};'.format(table, where_part))
         all_data = cursor.fetchall()
         
         result = []
