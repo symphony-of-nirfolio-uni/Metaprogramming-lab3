@@ -1,5 +1,5 @@
 """
-Has realization of Py2SQL class
+Has the implementation of Py2SQL class
 """
 
 from typing import List, Tuple
@@ -13,7 +13,7 @@ from .init_locker import InitLocker
 class Py2SQL(metaclass=InitLocker):
     """
     A set of specialized methods for work
-    with the corresponding relational database and various variants of object-relational display
+    with the corresponding relational database and various variants of object-relational mapping
     """
 
     __database_connection = None
@@ -49,7 +49,7 @@ class Py2SQL(metaclass=InitLocker):
     @staticmethod
     def db_engine() -> str:
         """
-        Return database name and version
+        Returns database name and version
         Format: "Name: Database_Name, Version: Database_Version"
 
         :return: database name and version
@@ -65,7 +65,7 @@ class Py2SQL(metaclass=InitLocker):
     @staticmethod
     def db_name() -> str:
         """
-        Return database name
+        Returns database name
 
         :return: database name
         """
@@ -77,7 +77,7 @@ class Py2SQL(metaclass=InitLocker):
     @staticmethod
     def db_size() -> float:
         """
-        Return database size in Mb
+        Returns database size in Mb
 
         :return: database size in Mb
         """
@@ -93,7 +93,7 @@ class Py2SQL(metaclass=InitLocker):
     @staticmethod
     def db_tables() -> List[str]:
         """
-        Return table name list
+        Returns table name list
 
         :return: list of table names
         """
@@ -108,11 +108,11 @@ class Py2SQL(metaclass=InitLocker):
     @staticmethod
     def db_table_structure(table: str) -> List[Tuple[int, str, str]]:
         """
-        Return list of tuple like (id, name, type),
+        Returns list of tuples like (id, name, type),
         where id - number of table attribute, name - attribute name, type - attribute type
 
         :param table: table name in current database
-        :return: list of tuple like (id, name, type),
+        :return: list of tuples like (id, name, type),
         where id - number of table attribute, name - attribute name, type - attribute type
         """
 
@@ -126,7 +126,7 @@ class Py2SQL(metaclass=InitLocker):
     @staticmethod
     def db_table_size(table: str) -> float:
         """
-        Return table size in Mb
+        Returns table size in Mb
 
         :param table: table name in current database
         :return: table size in Mb

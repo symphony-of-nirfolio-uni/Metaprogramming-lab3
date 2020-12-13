@@ -1,5 +1,5 @@
 """
-Has realization of DatabaseInfo class
+Has the implementation of DatabaseInfo class
 """
 
 
@@ -15,7 +15,7 @@ class DatabaseInfo:
         :param host: host of MySQL database
         :param user: user of MySQL database
         :param password: password for user
-        :param database: database name to connection
+        :param database: database name to connect
         """
 
         self.host = host
