@@ -17,3 +17,5 @@ if __name__ == '__main__':
 
     Py2SQL.db_connect(db)
 ```
+
+#### You can create database by executing DB/mysqlsampledatabase.sql file
