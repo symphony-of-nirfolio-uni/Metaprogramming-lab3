@@ -1,7 +1,8 @@
 import mysql.connector
 import os
 import pyclbr
-
+import shutil
+from importlib import reload
 from .database_info import DatabaseInfo
 from .init_locker import InitLocker
 
@@ -113,6 +114,7 @@ class Py2SQL(metaclass=InitLocker):
         table_camel = Py2SQL.__to_camel_case(table)
         Py2SQL.__create_class(table_camel, column_names, module)
 
+        reload(__import__(module))
         exec(f'from {module} import {table_camel}', globals())
 
     @staticmethod
@@ -131,12 +133,22 @@ class Py2SQL(metaclass=InitLocker):
         return new_s
 
     @staticmethod
+    def __to_snake_case(s):
+        new_s = ''
+        for i in range(len(s)):
+            if (s[i]).isupper() and i != 0 and s[i - 1] != '_' and \
+                    ((s[i - 1]).islower() or i + 1 < len(s) and (s[i + 1]).islower()):
+                new_s += '_'
+            new_s += (s[i]).lower()
+        return new_s
+
+    @staticmethod
     def __create_class(table, column_names, module):
+        file = open(module + '.py', 'a+')
+
         all_classes = pyclbr.readmodule(module)
         if table in all_classes:
             return
-
-        file = open(module + '.py', 'a+')
 
         if os.stat(module + '.py').st_size > 0:
             file.write('\n\n')
@@ -155,7 +167,72 @@ class Py2SQL(metaclass=InitLocker):
 
     @staticmethod
     def create_hierarchy(table, package):
-        pass
+
+        def write_to_init(t_snake, t_camel):
+            init_file = open(os.path.join(package, '__init__.py'), 'a+')
+            init_file.write(f'from .{t_snake} import {t_camel}\n')
+            init_file.close()
+            reload(__import__(package + '.__init__'))
+
+        name = Py2SQL.__select_single_query('SELECT DATABASE()')
+
+        used_table = []
+        table_names = [table]
+
+        if os.path.exists(package):
+            shutil.rmtree(package)
+        os.mkdir(package)
+
+        ok = True
+        while ok:
+            current_table = table_names[0]
+            used_table.append(current_table)
+
+            table_camel = Py2SQL.__to_camel_case(current_table)
+            table_snake = Py2SQL.__to_snake_case(current_table)
+
+            cursor = Py2SQL.__database_connection.cursor()
+            cursor.execute("SHOW COLUMNS FROM " + current_table + ";")
+            column_names = [column[0] for column in cursor]
+            Py2SQL.__create_class(table_camel, column_names, table_snake)
+
+            os.replace(table_snake + ".py", os.path.join(package, table_snake + ".py"))
+
+            write_to_init(table_snake, table_camel)
+
+            exec(f'from {package} import {table_camel}', globals())
+
+            table_names.extend(Py2SQL.__get_reference_to(name, current_table))
+            table_names.extend(Py2SQL.__get_reference_from(name, current_table))
+
+            while len(table_names) > 0 and table_names[0] in used_table:
+                if len(table_names) > 1:
+                    table_names = table_names[1:]
+                else:
+                    table_names = []
+
+            if len(table_names) == 0:
+                ok = False
+
+    @staticmethod
+    def __get_reference_to(db_name, table):
+        cursor = Py2SQL.__database_connection.cursor()
+        cursor.execute("SELECT referenced_table_name "
+                       "FROM information_schema.KEY_COLUMN_USAGE "
+                       "WHERE table_schema = '" + db_name +
+                       "' and table_name = '" + table +
+                       "' and NOT referenced_table_name IS NULL;")
+
+        return [column[0] for column in cursor]
+
+    @staticmethod
+    def __get_reference_from(db_name, table):
+        cursor = Py2SQL.__database_connection.cursor()
+        cursor.execute("SELECT table_name "
+                       "FROM information_schema.KEY_COLUMN_USAGE "
+                       "WHERE table_schema = '" + db_name + "' and referenced_table_name = '" + table + "' ;")
+
+        return [column[0] for column in cursor]
 
     @staticmethod
     def __check_connection():
