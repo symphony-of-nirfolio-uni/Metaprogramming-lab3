@@ -2,7 +2,9 @@ import mysql.connector
 import os
 import pyclbr
 import shutil
+import sys
 from importlib import reload
+
 from .database_info import DatabaseInfo
 from .init_locker import InitLocker
 
@@ -107,6 +109,8 @@ class Py2SQL(metaclass=InitLocker):
 
     @staticmethod
     def create_class(table, module):
+        Py2SQL.__check_connection()
+
         cursor = Py2SQL.__database_connection.cursor()
         cursor.execute("SHOW COLUMNS FROM " + table + ";")
 
@@ -139,7 +143,8 @@ class Py2SQL(metaclass=InitLocker):
             if (s[i]).isupper() and i != 0 and s[i - 1] != '_' and \
                     ((s[i - 1]).islower() or i + 1 < len(s) and (s[i + 1]).islower()):
                 new_s += '_'
-            new_s += (s[i]).lower()
+            if s[i] != ' ' and s[i] != '.':
+                new_s += (s[i]).lower()
         return new_s
 
     @staticmethod
@@ -167,14 +172,19 @@ class Py2SQL(metaclass=InitLocker):
 
     @staticmethod
     def create_hierarchy(table, package):
+        Py2SQL.__check_connection()
 
         def write_to_init(t_snake, t_camel):
-            init_file = open(os.path.join(package, '__init__.py'), 'a+')
-            init_file.write(f'from .{t_snake} import {t_camel}\n')
-            init_file.close()
-            reload(__import__(package + '.__init__'))
+            with open(os.path.join(package, '__init__.py'), 'a+') as init_file:
+                init_file.write(f'from .{t_snake} import {t_camel}\n')
 
-        name = Py2SQL.__select_single_query('SELECT DATABASE()')
+            try:
+                reload(__import__(package + '.__init__'))
+            except ModuleNotFoundError:
+                shutil.rmtree(package)
+                raise ValueError('Error occurred 1 time in 100 due to reload import func, please retry again')
+
+        name = Py2SQL.db_name()
 
         used_table = []
         table_names = [table]
