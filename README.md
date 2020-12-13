@@ -13,7 +13,7 @@ from Py2SQL import DatabaseInfo
 from Py2SQL import Py2SQL
 
 if __name__ == '__main__':
-    db = DatabaseInfo("localhost", "root", "", "db")
+    db = DatabaseInfo('localhost', 'root', '', 'db')
 
     Py2SQL.db_connect(db)
 ```
