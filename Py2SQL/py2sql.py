@@ -18,7 +18,7 @@ from ._init_locker import InitLocker
 class Py2SQL(metaclass=InitLocker):
     """
     A set of specialized methods for work
-    with the corresponding relational database and various varian ts of object-relational mapping
+    with the corresponding relational database and various variants of object-relational mapping
     """
 
     __database_connection = None
