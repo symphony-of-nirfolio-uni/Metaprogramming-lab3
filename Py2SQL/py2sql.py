@@ -152,8 +152,50 @@ class Py2SQL(metaclass=InitLocker):
         return float(size)
 
     @staticmethod
-    def find_object(table, py_object):
-        pass
+    def find_object(table: str, py_object: Any) -> List[Tuple[str, str, str]]:
+        """
+        Finds item in table and returns corresponding object
+
+        :param table: table name in current database
+        :param py_object: python object with fields and their values that must be equivalent to item of the table
+        :return: list of tuples (attribute, type, value),
+        where attribute - name of attribute, type - type of attribute, value - value of attribute
+        """
+        Py2SQL.__check_connection()
+
+        if type(table) != str:
+            raise TypeError('table must be str')
+
+        if table not in Py2SQL.db_tables():
+            raise ValueError(f'No such table in database {Py2SQL.db_name()}')
+        table_structure = Py2SQL.db_table_structure(table)
+        table_field_names = [x[1] for x in table_structure]
+        for argument in py_object.__dict__.keys():
+            if argument not in table_field_names:
+                raise ValueError(f'No field {argument} in table {table}')
+
+        cursor = Py2SQL.__database_connection.cursor()
+        sql_request = 'SELECT * ' \
+                      f'FROM {table} '
+        values = list()
+        if len(py_object.__dict__.keys()) != len(table_structure):
+            raise ValueError('Provide full information about object')
+        sql_request += 'WHERE '
+        first_condition = True
+        for key, value in py_object.__dict__.items():
+            s = '' if first_condition else 'AND '
+            first_condition = False
+            s += f'{key} = %s '
+            sql_request += s
+            values.append(value)
+        sql_request += ';'
+        cursor.execute(sql_request, tuple(values))
+        data = cursor.fetchall()
+        result = list()
+        if len(data) == 1:
+            for i in range(len(table_field_names)):
+                result.append((table_structure[i][1], table_structure[i][2], data[0][i]))
+        return result
 
     @staticmethod
     def find_objects_by(table: str, *attributes: Tuple[str, Any]) -> List[List[Tuple[str, str, str]]]:
@@ -186,7 +228,7 @@ class Py2SQL(metaclass=InitLocker):
                        'FROM {0} AS T '
                        '{1};'.format(table, where_part))
         all_data = cursor.fetchall()
-        
+
         result = []
         for data in all_data:
             row = []
@@ -197,12 +239,67 @@ class Py2SQL(metaclass=InitLocker):
         return result
 
     @staticmethod
-    def find_class(py_class):
-        pass
+    def find_class(py_class: Any) -> List[List[Tuple[str, str, str]]]:
+        """
+        Finds table with same attributes as py_class fields and returns its content
+
+        :param py_class: python object which fields used to find a table
+        :return: list of table objects represented as list of tuples (attribute, type, value),
+        where attribute - name of attribute, type - type of attribute, value - value of attribute
+        """
+        Py2SQL.__check_connection()
+        attributes = py_class.__dict__.keys()
+        tables = Py2SQL.db_tables()
+        for table in tables:
+            table_structure = Py2SQL.db_table_structure(table)
+            table_attributes = [x[1] for x in table_structure]
+            if len(attributes) == len(table_attributes):
+                is_same = True
+                for attribute in attributes:
+                    if attribute not in table_attributes:
+                        is_same = False
+                        break
+                if is_same:
+                    cursor = Py2SQL.__database_connection.cursor()
+                    cursor.execute('SELECT * '
+                                   f'FROM {table};')
+                    data = cursor.fetchall()
+                    result = list()
+                    for item in data:
+                        item_data = list()
+                        for i in range(len(item)):
+                            item_data.append((table_structure[i][1], table_structure[i][2], item[i]))
+                        result.append(item_data)
+                    return result
+        raise Exception(f'No table corresponding to {type(py_class).__name__} found')
 
     @staticmethod
-    def find_classes_by(*attributes):
-        pass
+    def find_classes_by(*attributes: Tuple[str, ...]) -> List[List[Tuple[str, str]]]:
+        """
+        Finds tables which have attributes and returns their structure
+
+        :param attributes: tuples (attribute_name, ...) where attribute_name is name of attribute
+        :return: list of table structures represented as list of tuples (attribute, type),
+        where attribute - name of attribute, type - type of attribute
+        """
+        Py2SQL.__check_connection()
+        tables = Py2SQL.db_tables()
+        result = list()
+        for table in tables:
+            table_structure = Py2SQL.db_table_structure(table)
+            table_attributes = [x[1] for x in table_structure]
+            is_table_match = True
+            for attribute_tuple in attributes:
+                if type(attribute_tuple) != tuple:
+                    raise Exception(f'{attribute_tuple}: all attributes must be tuple')
+                if len(attribute_tuple) < 1:
+                    raise Exception(f'{attribute_tuple}: no name in attribute')
+                attribute = attribute_tuple[0]
+                if attribute not in table_attributes:
+                    is_table_match = False
+            if is_table_match:
+                result.append([(x[1], x[2]) for x in table_structure])
+        return result
 
     @staticmethod
     def create_object(table: str, id: int) -> Any or None:
@@ -237,8 +334,41 @@ class Py2SQL(metaclass=InitLocker):
         return globals()[table_camel](*value)
 
     @staticmethod
-    def create_objects(table, fid, lid):
-        pass
+    def create_objects(table: str, fid: int, lid: int) -> List[Any]:
+        """
+        Creates list of objects from table with id from fid to lid included
+
+        :param table:  table name in current database
+        :param fid: first id of table item to be in the list
+        :param lid: last id of table item to be in the list
+        :return: list of objects from table with id from fid to lid included
+        """
+        Py2SQL.__check_connection()
+        if type(table) != str:
+            raise TypeError('table must be str')
+        if type(fid) != int or type(lid) != int:
+            raise TypeError('fid and lid must be int')
+
+        table_structure = Py2SQL.db_table_structure(table)
+        table_attributes = [x[1] for x in table_structure]
+        if 'id' not in table_attributes:
+            raise Exception('Field id doesn\'t exist in this table')
+
+        cursor = Py2SQL.__database_connection.cursor()
+        cursor.execute('SELECT *' 
+                       f'FROM {table} '
+                       f'WHERE id >= {fid} AND id <= {lid};')
+        data = cursor.fetchall()
+
+        table_class_name = Py2SQL.__to_camel_case(table)
+
+        if table_class_name not in globals():
+            Py2SQL.create_class(table, Py2SQL.__to_snake_case(table))
+
+        result = list()
+        for item in data:
+            result.append(globals()[table_class_name](*item))
+        return result
 
     @staticmethod
     def create_class(table: str, module: str) -> None:
