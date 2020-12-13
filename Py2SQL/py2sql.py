@@ -147,7 +147,7 @@ class Py2SQL(metaclass=InitLocker):
         return float(size)
 
     @staticmethod
-    def find_object(table, py_object):
+    def find_object(table: str, py_object: Any) -> List[Tuple[str, str, str]]:
         """
         Finds item in table and returns corresponding object
 
@@ -234,7 +234,7 @@ class Py2SQL(metaclass=InitLocker):
         return result
 
     @staticmethod
-    def find_class(py_class):
+    def find_class(py_class: Any) -> List[List[Tuple[str, str, str]]]:
         """
         Finds table with same attributes as py_class fields and returns its content
 
@@ -269,7 +269,7 @@ class Py2SQL(metaclass=InitLocker):
         raise Exception(f'No table corresponding to {type(py_class).__name__} found')
 
     @staticmethod
-    def find_classes_by(*attributes):
+    def find_classes_by(*attributes: Tuple[str, ...]) -> List[List[Tuple[str, str]]]:
         """
         Finds tables which have attributes and returns their structure
 
@@ -329,7 +329,7 @@ class Py2SQL(metaclass=InitLocker):
         return globals()[table_camel](*value)
 
     @staticmethod
-    def create_objects(table, fid, lid):
+    def create_objects(table: str, fid: int, lid: int) -> List[Any]:
         """
         Creates list of objects from table with id from fid to lid included
 
