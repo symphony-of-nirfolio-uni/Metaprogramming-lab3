@@ -148,6 +148,14 @@ class Py2SQL(metaclass=InitLocker):
 
     @staticmethod
     def find_object(table, py_object):
+        """
+        Finds item in table and returns corresponding object
+
+        :param table: table name in current database
+        :param py_object: python object with fields and their values that must be equivalent to item of the table
+        :return: list of tuples (attribute, type, value),
+        where attribute - name of attribute, type - type of attribute, value - value of attribute
+        """
         Py2SQL.__check_connection()
 
         if type(table) != str:
@@ -227,6 +235,13 @@ class Py2SQL(metaclass=InitLocker):
 
     @staticmethod
     def find_class(py_class):
+        """
+        Finds table with same attributes as py_class fields and returns its content
+
+        :param py_class: python object which fields used to find a table
+        :return: list of table objects represented as list of tuples (attribute, type, value),
+        where attribute - name of attribute, type - type of attribute, value - value of attribute
+        """
         Py2SQL.__check_connection()
         attributes = py_class.__dict__.keys()
         tables = Py2SQL.db_tables()
@@ -253,9 +268,15 @@ class Py2SQL(metaclass=InitLocker):
                     return result
         raise Exception(f'No table corresponding to {type(py_class).__name__} found')
 
-
     @staticmethod
     def find_classes_by(*attributes):
+        """
+        Finds tables which have attributes and returns their structure
+
+        :param attributes: tuples (attribute_name, ...) where attribute_name is name of attribute
+        :return: list of table structures represented as list of tuples (attribute, type),
+        where attribute - name of attribute, type - type of attribute
+        """
         Py2SQL.__check_connection()
         tables = Py2SQL.db_tables()
         result = list()
@@ -274,8 +295,6 @@ class Py2SQL(metaclass=InitLocker):
             if is_table_match:
                 result.append([(x[1], x[2]) for x in table_structure])
         return result
-
-
 
     @staticmethod
     def create_object(table: str, id: int) -> Any or None:
@@ -311,6 +330,14 @@ class Py2SQL(metaclass=InitLocker):
 
     @staticmethod
     def create_objects(table, fid, lid):
+        """
+        Creates list of objects from table with id from fid to lid included
+
+        :param table:  table name in current database
+        :param fid: first id of table item to be in the list
+        :param lid: last id of table item to be in the list
+        :return: list of objects from table with id from fid to lid included
+        """
         Py2SQL.__check_connection()
         if type(table) != str:
             raise TypeError('table must be str')
@@ -337,7 +364,6 @@ class Py2SQL(metaclass=InitLocker):
         for item in data:
             result.append(globals()[table_class_name](*item))
         return result
-
 
     @staticmethod
     def create_class(table: str, module: str) -> None:
