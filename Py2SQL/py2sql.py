@@ -1,3 +1,5 @@
+from typing import List, Tuple, Any
+
 import mysql.connector
 
 from .database_info import DatabaseInfo
@@ -83,7 +85,16 @@ class Py2SQL(metaclass=InitLocker):
         pass
 
     @staticmethod
-    def find_objects_by(table, *attributes):
+    def find_objects_by(table: str, *attributes: Tuple[str, Any]) -> List[List[Tuple[str, str, str]]]:
+        """
+        Returns an ordered list of database table table entries
+        that contain the attributes specified in the sequence attributes
+
+        :param table: table name
+        :param attributes: pairs (name, value)
+        :return: list of table rows, table row is list of tuples: (attribute, type, value)
+        """
+
         Py2SQL.__check_connection()
 
         table_structure = Py2SQL.db_table_structure(table)
