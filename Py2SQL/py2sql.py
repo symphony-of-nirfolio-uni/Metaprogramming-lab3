@@ -201,7 +201,27 @@ class Py2SQL(metaclass=InitLocker):
 
     @staticmethod
     def create_object(table, id):
-        pass
+        Py2SQL.__check_connection()
+
+        cursor = Py2SQL.__database_connection.cursor()
+        try:
+            cursor.execute("SELECT * "
+                           "FROM " + table +
+                           " WHERE id = " + str(id) + ";")
+        except:
+            print("Field id doesn't exist in this table")
+            return
+
+        value = cursor.fetchone()
+        if value is None:
+            return None
+
+        table_camel = Py2SQL.__to_camel_case(table)
+
+        if table_camel not in globals():
+            Py2SQL.create_class(table, Py2SQL.__to_snake_case(table))
+
+        return globals()[table_camel](*value)
 
     @staticmethod
     def create_objects(table, fid, lid):
