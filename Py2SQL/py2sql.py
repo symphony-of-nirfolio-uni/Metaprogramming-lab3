@@ -200,7 +200,15 @@ class Py2SQL(metaclass=InitLocker):
         pass
 
     @staticmethod
-    def create_object(table, id):
+    def create_object(table: str, id: int) -> Any or None:
+        """
+        Creates new object with id value from table
+
+        :param table: table name
+        :param id: id of object in table
+        :return: created object or None if query is empty
+        """
+
         Py2SQL.__check_connection()
 
         cursor = Py2SQL.__database_connection.cursor()
@@ -210,7 +218,7 @@ class Py2SQL(metaclass=InitLocker):
                            " WHERE id = " + str(id) + ";")
         except:
             print("Field id doesn't exist in this table")
-            return
+            return None
 
         value = cursor.fetchone()
         if value is None:
@@ -228,7 +236,14 @@ class Py2SQL(metaclass=InitLocker):
         pass
 
     @staticmethod
-    def create_class(table, module):
+    def create_class(table: str, module: str) -> None:
+        """
+        Creates class with field names from table column names in module
+
+        :param table: table name
+        :param module: name of module where to add new class
+        """
+
         Py2SQL.__check_connection()
 
         cursor = Py2SQL.__database_connection.cursor()
@@ -291,7 +306,14 @@ class Py2SQL(metaclass=InitLocker):
         file.close()
 
     @staticmethod
-    def create_hierarchy(table, package):
+    def create_hierarchy(table: str, package: str) -> None:
+        """
+        Creates new classes using current table and other tables that are transitively connected with current table and
+        add classes to package
+
+        :param table: table name
+        :param package: package name where to add new modules with classes
+        """
         Py2SQL.__check_connection()
 
         def write_to_init(t_snake, t_camel):
