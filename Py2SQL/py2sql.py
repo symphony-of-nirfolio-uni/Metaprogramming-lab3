@@ -2,7 +2,7 @@
 Has the implementation of Py2SQL class
 """
 
-from typing import List, Tuple
+from typing import List, Tuple, Any
 
 import mysql.connector
 import os
@@ -151,8 +151,45 @@ class Py2SQL(metaclass=InitLocker):
         pass
 
     @staticmethod
-    def find_objects_by(table, *attributes):
-        pass
+    def find_objects_by(table: str, *attributes: Tuple[str, Any]) -> List[List[Tuple[str, str, str]]]:
+        """
+        Returns an ordered list of database table table entries
+        that contain the attributes specified in the sequence attributes
+
+        :param table: table name
+        :param attributes: pairs (name, value)
+        :return: list of table rows, table row is list of tuples: (attribute, type, value)
+        """
+
+        Py2SQL.__check_connection()
+
+        table_structure = Py2SQL.db_table_structure(table)
+        table_structure_names = [x[1] for x in table_structure]
+
+        for attribute in attributes:
+            if attribute[0] not in table_structure_names:
+                raise ValueError('table hasn\'t {0} attribute'.format(attribute[0]))
+
+        where_part = ''
+        for attribute in attributes:
+            where_part += 'T.{0} = "{1}" AND '.format(attribute[0], attribute[1])
+        if len(where_part) != 0:
+            where_part = where_part[: -4]
+
+        cursor = Py2SQL.__database_connection.cursor()
+        cursor.execute('SELECT * '
+                       'FROM {0} AS T '
+                       'WHERE {1};'.format(table, where_part))
+        all_data = cursor.fetchall()
+        
+        result = []
+        for data in all_data:
+            row = []
+            for i, field in enumerate(table_structure):
+                row.append((field[1], field[2], data[i]))
+            result.append(row)
+
+        return result
 
     @staticmethod
     def find_class(py_class):
