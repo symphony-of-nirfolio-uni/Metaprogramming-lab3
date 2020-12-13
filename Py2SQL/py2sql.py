@@ -1,4 +1,6 @@
 import mysql.connector
+import os
+import pyclbr
 
 from .database_info import DatabaseInfo
 from .init_locker import InitLocker
@@ -104,7 +106,52 @@ class Py2SQL(metaclass=InitLocker):
 
     @staticmethod
     def create_class(table, module):
-        pass
+        cursor = Py2SQL.__database_connection.cursor()
+        cursor.execute("SHOW COLUMNS FROM " + table + ";")
+
+        column_names = [column[0] for column in cursor]
+        table_camel = Py2SQL.__to_camel_case(table)
+        Py2SQL.__create_class(table_camel, column_names, module)
+
+        exec(f'from {module} import {table_camel}', globals())
+
+    @staticmethod
+    def __to_camel_case(s):
+        new_s = ''
+        is_first = True
+        for i in range(len(s)):
+            if s[i] != '_' and s[i] != '-' and s[i] != ' ':
+                if is_first:
+                    new_s += (s[i]).upper()
+                    is_first = False
+                elif i > 0 and not (s[i-1] != '_' and s[i-1] != '-' and s[i-1] != ' '):
+                    new_s += s[i].upper()
+                else:
+                    new_s += s[i]
+        return new_s
+
+    @staticmethod
+    def __create_class(table, column_names, module):
+        all_classes = pyclbr.readmodule(module)
+        if table in all_classes:
+            return
+
+        file = open(module + '.py', 'a+')
+
+        if os.stat(module + '.py').st_size > 0:
+            file.write('\n\n')
+
+        file.write(f'class {table}:\n')
+        file.write('\tdef __init__(self')
+        for col in column_names:
+            file.write(', ' + col)
+        file.write('):\n')
+        if len(column_names) == 0:
+            file.write('\t\tpass\n')
+        else:
+            for col in column_names:
+                file.write('\t\tself.' + col + ' = ' + col + '\n')
+        file.close()
 
     @staticmethod
     def create_hierarchy(table, package):
