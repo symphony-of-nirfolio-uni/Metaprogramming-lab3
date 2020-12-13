@@ -8,11 +8,11 @@ import mysql.connector
 import os
 import pyclbr
 import shutil
-import sys
+
 from importlib import reload
 
 from .database_info import DatabaseInfo
-from .init_locker import InitLocker
+from ._init_locker import InitLocker
 
 
 class Py2SQL(metaclass=InitLocker):
@@ -302,7 +302,8 @@ class Py2SQL(metaclass=InitLocker):
                 reload(__import__(package + '.__init__'))
             except ModuleNotFoundError:
                 shutil.rmtree(package)
-                raise ValueError('Error occurred 1 time in 100 due to reload import func, please retry again')
+                print('Error occurred 1 time in 100 due to reload import func, please retry again')
+                raise
 
         name = Py2SQL.db_name()
 
