@@ -55,17 +55,22 @@ class Py2SQL(metaclass=InitLocker):
     def db_engine() -> str:
         """
         Returns database name and version
-        Format: "Name: Database_Name, Version: Database_Version"
+        Format: "Version: {version}, Version comment: {version_comment}}"
 
         :return: database name and version
         """
 
         Py2SQL.__check_connection()
-
-        name = Py2SQL.__select_single_query('SELECT DATABASE()')
+        
         version = Py2SQL.__select_single_query('SELECT VERSION()')
 
-        return 'Name: {0}, Version: {1}'.format(name, version)
+        cursor = Py2SQL.__database_connection.cursor()
+        cursor.execute('show variables like \'%version%\';')
+        data = cursor.fetchall()
+
+        version_comment = next(x[1] for x in data if x[0] == 'version_comment')
+
+        return 'Version: {0}, Version comment: {1}'.format(version, version_comment)
 
     @staticmethod
     def db_name() -> str:
