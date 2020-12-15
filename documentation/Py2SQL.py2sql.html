@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module Py2SQL.py2sql</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="Py2SQL.html"><font color="#ffffff">Py2SQL</font></a>.py2sql</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"></font></td></tr></table>
+    <p><tt>Has&nbsp;the&nbsp;implementation&nbsp;of&nbsp;<a href="#Py2SQL">Py2SQL</a>&nbsp;class</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="mysql.html">mysql</a><br>
+</td><td width="25%" valign=top><a href="os.html">os</a><br>
+</td><td width="25%" valign=top><a href="pyclbr.html">pyclbr</a><br>
+</td><td width="25%" valign=top><a href="shutil.html">shutil</a><br>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="Py2SQL.py2sql.html#Py2SQL">Py2SQL</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Py2SQL">class <strong>Py2SQL</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Py2SQL">Py2SQL</a>(*args,&nbsp;**kwargs)<br>
+&nbsp;<br>
+A&nbsp;set&nbsp;of&nbsp;specialized&nbsp;methods&nbsp;for&nbsp;work<br>
+with&nbsp;the&nbsp;corresponding&nbsp;relational&nbsp;database&nbsp;and&nbsp;various&nbsp;variants&nbsp;of&nbsp;object-relational&nbsp;mapping<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Static methods defined here:<br>
+<dl><dt><a name="Py2SQL-create_class"><strong>create_class</strong></a>(table: str, module: str) -&gt; None</dt><dd><tt>Creates&nbsp;class&nbsp;with&nbsp;field&nbsp;names&nbsp;from&nbsp;table&nbsp;column&nbsp;names&nbsp;in&nbsp;module<br>
+&nbsp;<br>
+:param&nbsp;table:&nbsp;table&nbsp;name<br>
+:param&nbsp;module:&nbsp;name&nbsp;of&nbsp;module&nbsp;where&nbsp;to&nbsp;add&nbsp;new&nbsp;class</tt></dd></dl>
+
+<dl><dt><a name="Py2SQL-create_hierarchy"><strong>create_hierarchy</strong></a>(table: str, package: str) -&gt; None</dt><dd><tt>Creates&nbsp;new&nbsp;classes&nbsp;using&nbsp;current&nbsp;table&nbsp;and&nbsp;other&nbsp;tables&nbsp;that&nbsp;are&nbsp;transitively&nbsp;connected&nbsp;with&nbsp;current&nbsp;table&nbsp;and<br>
+add&nbsp;classes&nbsp;to&nbsp;package<br>
+&nbsp;<br>
+:param&nbsp;table:&nbsp;table&nbsp;name<br>
+:param&nbsp;package:&nbsp;package&nbsp;name&nbsp;where&nbsp;to&nbsp;add&nbsp;new&nbsp;modules&nbsp;with&nbsp;classes</tt></dd></dl>
+
+<dl><dt><a name="Py2SQL-create_object"><strong>create_object</strong></a>(table: str, id: int) -&gt; Any</dt><dd><tt>Creates&nbsp;new&nbsp;object&nbsp;with&nbsp;id&nbsp;value&nbsp;from&nbsp;table<br>
+&nbsp;<br>
+:param&nbsp;table:&nbsp;table&nbsp;name<br>
+:param&nbsp;id:&nbsp;id&nbsp;of&nbsp;object&nbsp;in&nbsp;table<br>
+:return:&nbsp;created&nbsp;object&nbsp;or&nbsp;None&nbsp;if&nbsp;query&nbsp;is&nbsp;empty</tt></dd></dl>
+
+<dl><dt><a name="Py2SQL-create_objects"><strong>create_objects</strong></a>(table: str, fid: int, lid: int) -&gt; List[Any]</dt><dd><tt>Creates&nbsp;list&nbsp;of&nbsp;objects&nbsp;from&nbsp;table&nbsp;with&nbsp;id&nbsp;from&nbsp;fid&nbsp;to&nbsp;lid&nbsp;included<br>
+&nbsp;<br>
+:param&nbsp;table:&nbsp;&nbsp;table&nbsp;name&nbsp;in&nbsp;current&nbsp;database<br>
+:param&nbsp;fid:&nbsp;first&nbsp;id&nbsp;of&nbsp;table&nbsp;item&nbsp;to&nbsp;be&nbsp;in&nbsp;the&nbsp;list<br>
+:param&nbsp;lid:&nbsp;last&nbsp;id&nbsp;of&nbsp;table&nbsp;item&nbsp;to&nbsp;be&nbsp;in&nbsp;the&nbsp;list<br>
+:return:&nbsp;list&nbsp;of&nbsp;objects&nbsp;from&nbsp;table&nbsp;with&nbsp;id&nbsp;from&nbsp;fid&nbsp;to&nbsp;lid&nbsp;included</tt></dd></dl>
+
+<dl><dt><a name="Py2SQL-db_connect"><strong>db_connect</strong></a>(db: Py2SQL.database_info.DatabaseInfo) -&gt; None</dt><dd><tt>Establishes&nbsp;a&nbsp;connection&nbsp;to&nbsp;database<br>
+&nbsp;<br>
+:param&nbsp;db:&nbsp;parameters&nbsp;to&nbsp;connect&nbsp;to&nbsp;database</tt></dd></dl>
+
+<dl><dt><a name="Py2SQL-db_disconnect"><strong>db_disconnect</strong></a>() -&gt; None</dt><dd><tt>Terminates&nbsp;the&nbsp;connection&nbsp;to&nbsp;database</tt></dd></dl>
+
+<dl><dt><a name="Py2SQL-db_engine"><strong>db_engine</strong></a>() -&gt; str</dt><dd><tt>Returns&nbsp;database&nbsp;name&nbsp;and&nbsp;version<br>
+Format:&nbsp;"Version:&nbsp;{version},&nbsp;Version&nbsp;comment:&nbsp;{version_comment}}"<br>
+&nbsp;<br>
+:return:&nbsp;database&nbsp;name&nbsp;and&nbsp;version</tt></dd></dl>
+
+<dl><dt><a name="Py2SQL-db_name"><strong>db_name</strong></a>() -&gt; str</dt><dd><tt>Returns&nbsp;database&nbsp;name<br>
+&nbsp;<br>
+:return:&nbsp;database&nbsp;name</tt></dd></dl>
+
+<dl><dt><a name="Py2SQL-db_size"><strong>db_size</strong></a>() -&gt; float</dt><dd><tt>Returns&nbsp;database&nbsp;size&nbsp;in&nbsp;Mb<br>
+&nbsp;<br>
+:return:&nbsp;database&nbsp;size&nbsp;in&nbsp;Mb</tt></dd></dl>
+
+<dl><dt><a name="Py2SQL-db_table_size"><strong>db_table_size</strong></a>(table: str) -&gt; float</dt><dd><tt>Returns&nbsp;table&nbsp;size&nbsp;in&nbsp;Mb<br>
+&nbsp;<br>
+:param&nbsp;table:&nbsp;table&nbsp;name&nbsp;in&nbsp;current&nbsp;database<br>
+:return:&nbsp;table&nbsp;size&nbsp;in&nbsp;Mb</tt></dd></dl>
+
+<dl><dt><a name="Py2SQL-db_table_structure"><strong>db_table_structure</strong></a>(table: str) -&gt; List[Tuple[int, str, str]]</dt><dd><tt>Returns&nbsp;list&nbsp;of&nbsp;tuples&nbsp;like&nbsp;(id,&nbsp;name,&nbsp;type),<br>
+where&nbsp;id&nbsp;-&nbsp;number&nbsp;of&nbsp;table&nbsp;attribute,&nbsp;name&nbsp;-&nbsp;attribute&nbsp;name,&nbsp;type&nbsp;-&nbsp;attribute&nbsp;type<br>
+&nbsp;<br>
+:param&nbsp;table:&nbsp;table&nbsp;name&nbsp;in&nbsp;current&nbsp;database<br>
+:return:&nbsp;list&nbsp;of&nbsp;tuples&nbsp;like&nbsp;(id,&nbsp;name,&nbsp;type),<br>
+where&nbsp;id&nbsp;-&nbsp;number&nbsp;of&nbsp;table&nbsp;attribute,&nbsp;name&nbsp;-&nbsp;attribute&nbsp;name,&nbsp;type&nbsp;-&nbsp;attribute&nbsp;type</tt></dd></dl>
+
+<dl><dt><a name="Py2SQL-db_tables"><strong>db_tables</strong></a>() -&gt; List[str]</dt><dd><tt>Returns&nbsp;table&nbsp;name&nbsp;list<br>
+&nbsp;<br>
+:return:&nbsp;list&nbsp;of&nbsp;table&nbsp;names</tt></dd></dl>
+
+<dl><dt><a name="Py2SQL-find_class"><strong>find_class</strong></a>(py_class: Any) -&gt; List[List[Tuple[str, str, str]]]</dt><dd><tt>Finds&nbsp;table&nbsp;with&nbsp;same&nbsp;attributes&nbsp;as&nbsp;py_class&nbsp;fields&nbsp;and&nbsp;returns&nbsp;its&nbsp;content<br>
+&nbsp;<br>
+:param&nbsp;py_class:&nbsp;python&nbsp;object&nbsp;which&nbsp;fields&nbsp;used&nbsp;to&nbsp;find&nbsp;a&nbsp;table<br>
+:return:&nbsp;list&nbsp;of&nbsp;table&nbsp;objects&nbsp;represented&nbsp;as&nbsp;list&nbsp;of&nbsp;tuples&nbsp;(attribute,&nbsp;type,&nbsp;value),<br>
+where&nbsp;attribute&nbsp;-&nbsp;name&nbsp;of&nbsp;attribute,&nbsp;type&nbsp;-&nbsp;type&nbsp;of&nbsp;attribute,&nbsp;value&nbsp;-&nbsp;value&nbsp;of&nbsp;attribute</tt></dd></dl>
+
+<dl><dt><a name="Py2SQL-find_classes_by"><strong>find_classes_by</strong></a>(*attributes: Tuple[str, ...]) -&gt; List[List[Tuple[str, str]]]</dt><dd><tt>Finds&nbsp;tables&nbsp;which&nbsp;have&nbsp;attributes&nbsp;and&nbsp;returns&nbsp;their&nbsp;structure<br>
+&nbsp;<br>
+:param&nbsp;attributes:&nbsp;tuples&nbsp;(attribute_name,&nbsp;...)&nbsp;where&nbsp;attribute_name&nbsp;is&nbsp;name&nbsp;of&nbsp;attribute<br>
+:return:&nbsp;list&nbsp;of&nbsp;table&nbsp;structures&nbsp;represented&nbsp;as&nbsp;list&nbsp;of&nbsp;tuples&nbsp;(attribute,&nbsp;type),<br>
+where&nbsp;attribute&nbsp;-&nbsp;name&nbsp;of&nbsp;attribute,&nbsp;type&nbsp;-&nbsp;type&nbsp;of&nbsp;attribute</tt></dd></dl>
+
+<dl><dt><a name="Py2SQL-find_object"><strong>find_object</strong></a>(table: str, py_object: Any) -&gt; List[Tuple[str, str, str]]</dt><dd><tt>Finds&nbsp;item&nbsp;in&nbsp;table&nbsp;and&nbsp;returns&nbsp;corresponding&nbsp;object<br>
+&nbsp;<br>
+:param&nbsp;table:&nbsp;table&nbsp;name&nbsp;in&nbsp;current&nbsp;database<br>
+:param&nbsp;py_object:&nbsp;python&nbsp;object&nbsp;with&nbsp;fields&nbsp;and&nbsp;their&nbsp;values&nbsp;that&nbsp;must&nbsp;be&nbsp;equivalent&nbsp;to&nbsp;item&nbsp;of&nbsp;the&nbsp;table<br>
+:return:&nbsp;list&nbsp;of&nbsp;tuples&nbsp;(attribute,&nbsp;type,&nbsp;value),<br>
+where&nbsp;attribute&nbsp;-&nbsp;name&nbsp;of&nbsp;attribute,&nbsp;type&nbsp;-&nbsp;type&nbsp;of&nbsp;attribute,&nbsp;value&nbsp;-&nbsp;value&nbsp;of&nbsp;attribute</tt></dd></dl>
+
+<dl><dt><a name="Py2SQL-find_objects_by"><strong>find_objects_by</strong></a>(table: str, *attributes: Tuple[str, Any]) -&gt; List[List[Tuple[str, str, str]]]</dt><dd><tt>Returns&nbsp;an&nbsp;ordered&nbsp;list&nbsp;of&nbsp;database&nbsp;table&nbsp;table&nbsp;entries<br>
+that&nbsp;contain&nbsp;the&nbsp;attributes&nbsp;specified&nbsp;in&nbsp;the&nbsp;sequence&nbsp;attributes<br>
+&nbsp;<br>
+:param&nbsp;table:&nbsp;table&nbsp;name<br>
+:param&nbsp;attributes:&nbsp;pairs&nbsp;(name,&nbsp;value)<br>
+:return:&nbsp;list&nbsp;of&nbsp;table&nbsp;rows,&nbsp;table&nbsp;row&nbsp;is&nbsp;list&nbsp;of&nbsp;tuples:&nbsp;(attribute,&nbsp;type,&nbsp;value)</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>Any</strong> = typing.Any<br>
+<strong>List</strong> = typing.List<br>
+<strong>Tuple</strong> = typing.Tuple</td></tr></table>
+</body></html>
